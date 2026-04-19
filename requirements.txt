@@ -1,0 +1,16 @@
+# Core dependencies
+pandas>=2.0.0
+numpy>=1.22.0
+scikit-learn>=1.1.0
+joblib>=1.2.0
+
+# Dataset
+datasets>=2.0.0
+
+# Data validation & auditing
+great-expectations>=0.15.0
+cleanlab>=2.0.0
+
+# Optional visualization
+matplotlib>=3.5.0
+seaborn>=0.12.0
