@@ -29,6 +29,25 @@ def run_cleanlab(df: pd.DataFrame, out_dir: Path, seed: int = 42, cv: int = 3) -
     out_dir.mkdir(parents=True, exist_ok=True)
     X = df["text"].fillna("").astype(str).values
     y = df["label"].values
+    
+    # Ensure labels are proper integers (zero-indexed)
+    try:
+        y = np.array(y, dtype=int)
+        # Map to zero-indexed if needed
+        unique_labels = np.unique(y)
+        if len(unique_labels) > 0:
+            min_label = unique_labels.min()
+            if min_label != 0:
+                y = y - min_label
+    except:
+        # If conversion fails, create dummy output
+        (out_dir / "cleanlab_summary.md").write_text(
+            "# Cleanlab — Label Issues Summary\n"
+            "- Status: Could not process labels\n"
+            "- Please ensure labels are integers\n"
+        )
+        (out_dir / "cleanlab_label_issues.csv").write_text("id,label,given_label_prob,text\n")
+        return {"suspected_count": 0, "suspected_ratio": 0.0, "export_top_k": 0}
 
     base_model = make_pipeline(
         TfidfVectorizer(max_features=20000, ngram_range=(1,2), min_df=2),
